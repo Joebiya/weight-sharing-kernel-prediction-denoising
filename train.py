@@ -107,7 +107,7 @@ def Inference(model, device, dataset, dataloader, saving_root=""):
 
 if __name__ == "__main__":
 
-    torch.cuda.set_device(1)
+    torch.cuda.set_device(0)
     torch.backends.cudnn.deterministic = True  # same result for cpu and gpu
     torch.backends.cudnn.benchmark = False # key in here: Should be False. Ture will make the training process unstable
     device = torch.device("cuda")
@@ -119,6 +119,7 @@ if __name__ == "__main__":
 
     database = dataset.DataBase()
     dataset_train = dataset.BMFRFullResAlDataset(database, use_train=True)
+    print(f"Number of samples in dataset_train: {len(dataset_train)}")
     dataloader_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
     dataset_val = dataset.BMFRFullResAlDataset(database, use_val=True)
     dataloader_val = torch.utils.data.DataLoader(dataset_val, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)

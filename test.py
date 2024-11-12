@@ -59,7 +59,7 @@ def Inference(model, device, dataloader, saving_root=""):
 
 
 if __name__ == "__main__":
-    torch.cuda.set_device(1)
+    torch.cuda.set_device(0)
     torch.backends.cudnn.deterministic = True  # same result for cpu and gpu
     torch.backends.cudnn.benchmark = False # key in here: Should be False. Ture will make the training process unstable
     device = torch.device("cuda")
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     os.makedirs(test_saving_root, exist_ok=True)
 
     model_pretrain = net.repWeightSharingKPNet(device).to(device)
-    map_location = {'cuda:0': 'cuda:1'}
+    map_location = {'cuda:1': 'cuda:0'}
     checkpoint = torch.load("checkpoints/classroom/model.pt", map_location) # NOTE
     model_pretrain.load_state_dict(checkpoint['model_state_dict'])
     model_deployment = net.repWeightSharingKPNet(device, is_deployment=True, model_pretrain=model_pretrain).to(device)

@@ -17,7 +17,7 @@ class DataBase:
         scene_names = ["classroom-example"]
             
         # img_num_per_scene = 60
-        img_num_per_scene = 5
+        img_num_per_scene = 3
         albedo_file_names = [os.path.join(folder_name, scene_name, "inputs", "albedo"+str(i)+".exr") for scene_name in scene_names for i in range(img_num_per_scene)]
         irradiance_file_names = [os.path.join(folder_name, scene_name, "acc_colors", "color"+str(i)+".exr") for scene_name in scene_names for i in range(img_num_per_scene)]
         reference_file_names = [os.path.join(folder_name, scene_name, "inputs", "reference"+str(i)+".exr") for scene_name in scene_names for i in range(img_num_per_scene)]
