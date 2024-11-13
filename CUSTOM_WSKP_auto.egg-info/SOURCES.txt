@@ -1,0 +1,6 @@
+LICENSE
+README.md
+CUSTOM_WSKP_auto.egg-info/PKG-INFO
+CUSTOM_WSKP_auto.egg-info/SOURCES.txt
+CUSTOM_WSKP_auto.egg-info/dependency_links.txt
+CUSTOM_WSKP_auto.egg-info/top_level.txt

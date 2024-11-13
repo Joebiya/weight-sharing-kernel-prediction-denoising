@@ -5,6 +5,12 @@
 
 #include <vector>
 
+__host__ __device__ inline float3 operator+=(float3 &a, const float3 &b) {
+    a.x += b.x;
+    a.y += b.y;
+    a.z += b.z;
+    return a;
+}
 
 namespace {
 

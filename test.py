@@ -22,7 +22,11 @@ def ComputeMetrics(truth_img, test_img):
     truth_img = BMFRGammaCorrection(truth_img)
     test_img  = BMFRGammaCorrection(test_img)
     
-    SSIM = structural_similarity(truth_img, test_img, multichannel=True)
+    min_dim = min(truth_img.shape[:2])
+    win_size = min(7, min_dim // 2 * 2 + 1)  # 确保 win_size 是奇数且不超过图像尺寸
+    
+    # SSIM = structural_similarity(truth_img, test_img, multichannel=True)
+    SSIM = structural_similarity(truth_img, test_img, win_size=win_size, channel_axis=-1, data_range=1.0)
     PSNR = peak_signal_noise_ratio(truth_img, test_img)
     return SSIM, PSNR
 
@@ -59,7 +63,7 @@ def Inference(model, device, dataloader, saving_root=""):
 
 
 if __name__ == "__main__":
-    torch.cuda.set_device(0)
+    torch.cuda.set_device(5)
     torch.backends.cudnn.deterministic = True  # same result for cpu and gpu
     torch.backends.cudnn.benchmark = False # key in here: Should be False. Ture will make the training process unstable
     device = torch.device("cuda")
