@@ -12,6 +12,8 @@ from skimage.metrics import peak_signal_noise_ratio
 import dataset
 import net
 
+import time
+
 def BMFRGammaCorrection(img):
     if isinstance(img, np.ndarray):
         return np.clip(np.power(np.maximum(img, 0.0), 0.454545), 0.0, 1.0)
@@ -25,8 +27,8 @@ def ComputeMetrics(truth_img, test_img):
     min_dim = min(truth_img.shape[:2])
     win_size = min(7, min_dim // 2 * 2 + 1)  # 确保 win_size 是奇数且不超过图像尺寸
     
-    # SSIM = structural_similarity(truth_img, test_img, multichannel=True)
-    SSIM = structural_similarity(truth_img, test_img, win_size=win_size, channel_axis=-1, data_range=1.0)
+    SSIM = structural_similarity(truth_img, test_img, multichannel=True)
+    # SSIM = structural_similarity(truth_img, test_img, win_size=win_size, channel_axis=-1, data_range=1.0)
     PSNR = peak_signal_noise_ratio(truth_img, test_img)
     return SSIM, PSNR
 
@@ -78,8 +80,10 @@ if __name__ == "__main__":
     os.makedirs(test_saving_root, exist_ok=True)
 
     model_pretrain = net.repWeightSharingKPNet(device).to(device)
-    map_location = {'cuda:1': 'cuda:0'}
-    checkpoint = torch.load("checkpoints/classroom/model.pt", map_location) # NOTE
+    checkpoint = torch.load("checkpoints/sponza/model.pt") # NOTE
     model_pretrain.load_state_dict(checkpoint['model_state_dict'])
     model_deployment = net.repWeightSharingKPNet(device, is_deployment=True, model_pretrain=model_pretrain).to(device)
+    start_time =time.time()
     Inference(model_deployment, device, dataloader_test, test_saving_root)
+    end_time = time.time()
+    print(f"Using time: {end_time-start_time}")

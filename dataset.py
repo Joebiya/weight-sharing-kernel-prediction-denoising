@@ -14,14 +14,12 @@ def Padding(img, w):
 class DataBase:
     def __init__(self, crop_size=128):
         folder_name = os.path.join("dataset")
-        train_set = "/data/hjy/exrset_train/output"
+        train_set = "/data/hjy/exrset_test/output"
         scene_names = []
         # scene_num = 1024
-        scene_num = 100
-        for i in range(scene_num):
-            scene_names.append(f"scene{i:04d}")
-        # scene_names = ["classroom", "living-room", "san-miguel", "sponza-glossy", "sponza"]
-        # scene_names = ["classroom-example"]
+        scene_num = 9
+        for scene in os.listdir(train_set):
+            scene_names.append(scene)
 
         img_num_per_scene = 64
         albedo_file_names = []
@@ -29,71 +27,17 @@ class DataBase:
         reference_file_names = []
         normal_file_names = []
         depth_file_names = []
+        
         for i in tqdm(range(len(scene_names)), desc="Loading scenes"):
             scene_name = scene_names[i]
             scene_path = os.path.join(train_set, scene_name)
-            #color
-            color_path = os.path.join(scene_path, "color")
-            for i in range (img_num_per_scene):
-                color_file = os.path.join(color_path, "frame_" + str(i) + ".exr")
-                irradiance_file_names.append(color_file)
-                
-            #albedo
-            diffuse_path = os.path.join(scene_path, "diffuse")
-            for i in range (img_num_per_scene):
-                diffuse_file = os.path.join(diffuse_path, "frame_" + str(i) + ".exr")
-                albedo_file_names.append(diffuse_file)
-            
-            #reference
-            ref_path = os.path.join(scene_path, "reference")
-            for i in range (img_num_per_scene):
-                ref_file = os.path.join(ref_path, "frame_" + str(i) + ".exr")
-                reference_file_names.append(ref_file)
-            
-            #normal
-            normal_path = os.path.join(scene_path, "normal")
-            for i in range (img_num_per_scene):
-                normal_file = os.path.join(normal_path, "frame_" + str(i) + ".exr")
-                normal_file_names.append(normal_file)
-            
-            #depth
-            depth_path = os.path.join(scene_path, "position")
-            for i in range (img_num_per_scene):
-                depth_file = os.path.join(depth_path, "frame_" + str(i) + ".exr")
-                depth_file_names.append(depth_file)
-
-
-        # albedo_file_names = [
-        #     os.path.join(folder_name, scene_name, "inputs", "albedo" + str(i) + ".exr")
-        #     for scene_name in scene_names
-        #     for i in range(img_num_per_scene)
-        # ]
-        # irradiance_file_names = [
-        #     os.path.join(
-        #         folder_name, scene_name, "acc_colors", "color" + str(i) + ".exr"
-        #     )
-        #     for scene_name in scene_names
-        #     for i in range(img_num_per_scene)
-        # ]
-        # reference_file_names = [
-        #     os.path.join(
-        #         folder_name, scene_name, "inputs", "reference" + str(i) + ".exr"
-        #     )
-        #     for scene_name in scene_names
-        #     for i in range(img_num_per_scene)
-        # ]
-        # normal_file_names = [
-        #     os.path.join(
-        #         folder_name, scene_name, "inputs", "shading_normal" + str(i) + ".exr"
-        #     )
-        #     for scene_name in scene_names
-        #     for i in range(img_num_per_scene)
-        # ]
-        # depth_file_names = [
-        #     os.path.join(folder_name, scene_name, "depth", "depth" + str(i) + ".exr")
-        #     for scene_name in scene_names
-        #     for i in range(img_num_per_scene)
-        # ]  # already in range [0, 1]
+            for frame in os.listdir(scene_path):
+                frame_path = os.path.join(scene_path, frame)
+                albedo_file_names.append(os.path.join(frame_path, "diffuse.exr"))
+                irradiance_file_names.append(os.path.join(frame_path, "color.exr"))
+                reference_file_names.append(os.path.join(frame_path, "reference.exr"))
+                normal_file_names.append(os.path.join(frame_path, "normal.exr"))
+                depth_file_names.append(os.path.join(frame_path, "position.exr"))
 
         self.train_inputs, self.train_targets = [], []
         self.test_inputs, self.test_targets = [], []
