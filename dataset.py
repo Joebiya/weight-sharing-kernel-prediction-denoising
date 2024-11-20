@@ -13,15 +13,12 @@ def Padding(img, w):
 
 class DataBase:
     def __init__(self, crop_size=128):
-        folder_name = os.path.join("dataset")
         train_set = "/data/hjy/exrset_test/output"
         scene_names = []
-        # scene_num = 1024
-        scene_num = 9
-        for scene in os.listdir(train_set):
-            scene_names.append(scene)
+        # for scene in os.listdir(train_set):
+        #     scene_names.append(scene)
+        scene_names.append('bistro3')
 
-        img_num_per_scene = 64
         albedo_file_names = []
         irradiance_file_names = []
         reference_file_names = []
@@ -37,7 +34,7 @@ class DataBase:
                 irradiance_file_names.append(os.path.join(frame_path, "color.exr"))
                 reference_file_names.append(os.path.join(frame_path, "reference.exr"))
                 normal_file_names.append(os.path.join(frame_path, "normal.exr"))
-                depth_file_names.append(os.path.join(frame_path, "position.exr"))
+                depth_file_names.append(os.path.join(frame_path, "depth.exr"))
 
         self.train_inputs, self.train_targets = [], []
         self.test_inputs, self.test_targets = [], []
@@ -54,28 +51,14 @@ class DataBase:
                 np.max(depth_img) - np.min(depth_img)
             )
 
-            if i < 60 * (len(scene_names) - 1):
-                inputs = np.concatenate(
-                    (
-                        Padding(irradiance_img, crop_size),
-                        Padding(albedo_img, crop_size),
-                        Padding(normal_img, crop_size),
-                        Padding(depth_img, crop_size),
-                    ),
-                    axis=2,
-                )
-                targets = Padding(reference_img, crop_size)
+            
+            inputs = np.concatenate(
+                (irradiance_img, albedo_img, normal_img, depth_img), axis=2
+            )
+            targets = reference_img
 
-                self.train_inputs.append(inputs)
-                self.train_targets.append(targets)
-            else:
-                inputs = np.concatenate(
-                    (irradiance_img, albedo_img, normal_img, depth_img), axis=2
-                )
-                targets = reference_img
-
-                self.test_inputs.append(inputs)
-                self.test_targets.append(targets)
+            self.test_inputs.append(inputs)
+            self.test_targets.append(targets)
 
         H, W, _ = self.test_targets[0].shape
         self.img_h, self.img_w = H - crop_size, W - crop_size
